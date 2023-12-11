@@ -1,12 +1,14 @@
 "use client";
+
+import React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-import React from "react";
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
 import { User } from "next-auth";
 import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
@@ -23,7 +25,7 @@ const UserAccountNav = ({ user }: Props) => {
         <UserAvatar user={user} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <div className="flex items-center justify-start gap-2 p-2 bg-white">
+        <div className="flex items-center justify-start gap-2 p-2">
           <div className="flex flex-col space-y-1 leading-none">
             {user?.name && <p className="font-medium">{user.name}</p>}
             {user?.email && (
@@ -33,12 +35,13 @@ const UserAccountNav = ({ user }: Props) => {
             )}
           </div>
         </div>
+
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => {
             signOut();
           }}
-          className="text-red-600 cursor-pointer p-2"
+          className="text-red-600 cursor-pointer"
         >
           Sign out
           <LogOut className="w-4 h-4 ml-2" />
