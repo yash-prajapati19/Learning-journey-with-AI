@@ -15,11 +15,11 @@ import axios from "axios";
 import { useToast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
 
-type Props = {};
+type Props = { isPro: boolean };
 
 type Input = z.infer<typeof createChaptersSchema>;
 
-const CreateCourseForm = (props: Props) => {
+const CreateCourseForm = ({ isPro }: Props) => {
   const router = useRouter();
   const { toast } = useToast();
   const { mutate: createChapters, isPending } = useMutation({
@@ -48,24 +48,23 @@ const CreateCourseForm = (props: Props) => {
       });
       return;
     }
-    createChapters(data),
-      {
-        onSuccess: ({ course_id }) => {
-          toast({
-            title: "Success",
-            description: "Course created successfully",
-          });
-          router.push(`/course/${course_id}`);
-        },
-        onError: (error: any) => {
-          console.error(error);
-          toast({
-            title: "Error",
-            description: "Something went wrong",
-            variant: "destructive",
-          });
-        },
-      };
+    createChapters(data, {
+      onSuccess: ({ course_id }) => {
+        toast({
+          title: "Success",
+          description: "Course created successfully",
+        });
+        router.push(`/create/${course_id}`);
+      },
+      onError: (error) => {
+        console.error(error);
+        toast({
+          title: "Error",
+          description: "Something went wrong",
+          variant: "destructive",
+        });
+      },
+    });
   }
 
   form.watch();
@@ -80,7 +79,7 @@ const CreateCourseForm = (props: Props) => {
             render={({ field }) => {
               return (
                 <FormItem className="flex flex-col items-start w-full sm:items-center sm:flex-row">
-                  <FormLabel className="flex-[1]  text-xl">Title</FormLabel>
+                  <FormLabel className="flex-[1] text-xl">Title</FormLabel>
                   <FormControl className="flex-[6]">
                     <Input
                       placeholder="Enter the main topic of the course"
@@ -91,6 +90,7 @@ const CreateCourseForm = (props: Props) => {
               );
             }}
           />
+
           <AnimatePresence>
             {form.watch("units").map((_, index) => {
               return (
@@ -143,12 +143,13 @@ const CreateCourseForm = (props: Props) => {
                 Add Unit
                 <Plus className="w-4 h-4 ml-2 text-green-500" />
               </Button>
+
               <Button
                 type="button"
                 variant="secondary"
                 className="font-semibold ml-2"
                 onClick={() => {
-                  form.setValue("units", [...form.watch("units").slice(0, -1)]);
+                  form.setValue("units", form.watch("units").slice(0, -1));
                 }}
               >
                 Remove Unit
@@ -167,6 +168,7 @@ const CreateCourseForm = (props: Props) => {
           </Button>
         </form>
       </Form>
+      {/* {!isPro && <SubscriptionAction />} */}
     </div>
   );
 };
